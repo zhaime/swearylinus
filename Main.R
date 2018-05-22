@@ -1,8 +1,6 @@
 #set working directory
 #importdata
-setwd("~/Documents/LINUS")
 words<-read.table("insults.txt", header=FALSE, comment.char="", quote="\"", sep='\t')
-
 
 #worddata
 #change to lowercase
