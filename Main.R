@@ -27,7 +27,7 @@ review_words<-Corpus(VectorSource(wordlist))
 wordsremoved<-tm_map(review_words, removeWords,stopwords())
 
 #remove non-alphanumeric characters from stopwords
-stopwords2<- gsub("[^a-z]","",stopwords)
+stopwords<- gsub("[^a-z]","",stopwords)
 
 #remove punctuation from wordsremoved
 #remove updated stopwords
