@@ -1,13 +1,7 @@
 a
 about
-above
-after
-again
-against
-all
-am
-an
-and
+is
+line
 any
 are
 aren't

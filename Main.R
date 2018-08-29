@@ -19,6 +19,41 @@ get_words_from_file <- function(rawLines, wordList) {
     return(wordList)
 }
 
+clean_words <- function(raw_words) {
+    cleaned_words <- list()
+    i <- 1
+    for (word in raw_words) {
+        clean <- remove_non_alphanumeric(tolower(word))
+        if (clean != '') {
+            cleaned_words[[i]] <- clean
+        }
+        i <- i + 1
+    }
+
+    return(cleaned_words)
+}
+
+# Function that removes non-alphanumeric characters from a string
+# e.g. "sh*t!" --> "sht"
+remove_non_alphanumeric <- function(str) {
+    stripped <- gsub("[^a-z]", "", str)
+    return(stripped)
+}
+
+remove_stopwords <- function(clean_insults, clean_stopwords) {
+    non_stopwords <- list()
+    i <- 1
+    for (word in clean_insults) {
+        find_stopword <- word %in% clean_stopwords
+        if (length(word) > 0 && !find_stopword) {
+            non_stopwords[[i]] <- word
+            i <- i + 1
+        }
+    }
+
+    return(non_stopwords)
+}
+
 # Read insults & stopwords as raw lines (not a table or other 2D structure)
 insults_txt <- file(insults_filename, encoding="UTF8")
 insults <- readLines(insults_txt)
@@ -29,35 +64,15 @@ stopwords <- readLines(stopwords_txt)
 raw_insult_words <- get_words_from_file(insults, list())
 raw_stopword_words <- get_words_from_file(stopwords, list())
 
-print("raw_insult_words length is:")
-print(length(raw_insult_words))
-print(unlist(raw_insult_words))
+# Clean insult & stopword words
+# i.e. make lower-case, remove non-alphanumerics, remove empty words
+clean_insults <- clean_words(raw_insult_words)
+clean_stopwords <- clean_words(raw_stopword_words)
 
-print("raw_stopword_words length is:")
-print(length(raw_stopword_words))
-print(unlist(raw_stopword_words))
+# Remove stopwords from the clean insults
+valid_insults <- remove_stopwords(clean_insults, clean_stopwords)
 
-# for (insult_line in insults) {
-#     # insult_words<-strsplit(insult_line, " ")
-#     # lower_insult_words<-sapply(insult_words, tolower)
-#     # x<-gsub("  ", "", lower_insult_words)
-#     # wordlist<-gsub("[0-9]", "", x)
-# }
-
-# #import stopwords
-# #add stopwords to dict
-# stopwords<-read.table("stopwords.txt", header=FALSE, comment.char="", quote="\"", sep='\n')
-# stopwords<-as.character(stopwords$V1)
-# stopwords<-c(stopwords, stopwords)
-
-# #create corpus to remove stopwords from wordlist
-# library(tm)
-# review_words<-Corpus(VectorSource(wordlist))
-# wordsremoved<-tm_map(review_words, removeWords, stopwords())
-# #remove only-letter stopwords fro wordlist
-
-# #remove non-letter characters from stopwords
-# stopwords<-gsub("[^a-z]", "", stopwords)
+print(valid_insults)
 
 # #remove punctuation from wordsremoved
 # #remove updated stopwords
