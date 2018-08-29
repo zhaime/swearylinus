@@ -1,6 +1,8 @@
+library(tm)
+
 # Point to insults & stopwords files
-insults_filename <- "insults-debug.txt"
-stopwords_filename <- "stopwords-debug.txt"
+insults_filename <- "insults.txt"
+stopwords_filename <- "stopwords.txt"
 
 # Function that accepts a list of raw (un-separated) lines, returns a list of words
 get_words_from_file <- function(rawLines, wordList) {
@@ -72,22 +74,15 @@ clean_stopwords <- clean_words(raw_stopword_words)
 # Remove stopwords from the clean insults
 valid_insults <- remove_stopwords(clean_insults, clean_stopwords)
 
-print(valid_insults)
+# Use the TM library to create a Corpus of words
+as_corp <- Corpus(VectorSource(valid_insults))
+as_terms <- DocumentTermMatrix(as_corp)
+as_matrix <- as.matrix(as_terms)
 
-# #remove punctuation from wordsremoved
-# #remove updated stopwords
-# #create matrix and sort into frequency
-# review_words2<-Corpus(VectorSource(wordsremoved))
-# wordsend<-tm_map(review_words2, removePunctuation)
-# wordsend<-tm_map(wordsend, removeWords, stopwords())
-# wordsend<-tm_map(wordsend, stripWhitespace)
-# wordsendmatrix1<-DocumentTermMatrix(wordsend)
-# wordsendmatrix2<-as.matrix(wordsendmatrix1)
-# frequency<-colSums(wordsendmatrix2)
-# frequency<-sort(frequency, decreasing=TRUE)
+# Count & sort the words
+frequency <- colSums(as_matrix)
+sorted <- sort(frequency, decreasing=TRUE)
+top_list <- head(sorted, 25)
 
-# #sort for top 25 words
-# #change array into list
-# list<-head(frequency, 25)
-# library(tidyr)
-# as.data.frame(list) %>% separate(list, into = paste("V", 1, sep = "_"))
+# Output the words
+print(top_list)
